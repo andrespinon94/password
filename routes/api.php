@@ -19,13 +19,16 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 Route::apiResource('users','UserController');
-Route::apiResource('categories','CategoryController');
-Route::apiResource('password','PasswordController');
+Route::POST('login','UserController@login');
 
 
 Route::group(['middleware'=>['auth']], function()
 {
-    
+
+Route::apiResource('categories','CategoryController');
+Route::apiResource('password','PasswordController');
+Route::GET('show','UserController@show');
+
     
 
 });

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Helpers\Token;
+
 
 class UserController extends Controller
 {
@@ -35,7 +37,20 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = new User();
+        
+        $user->register($request);
+
+        $data_token = [
+            "email" => $user->email,
+        ];
+
+        $token = new Token($data_token);
+        $tokenEncode = $token->encode();
+    
+        return response()->json([
+            "token" => $tokenEncode
+        ], 201);
     }
 
     /**
@@ -44,9 +59,14 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Data_token $data_token)
     {
-        //
+        
+        $user = User::where('email',$data_token->email)->first();
+        return response()->json([
+            "user" => $user
+        ], 201);
+        
     }
 
     /**
@@ -81,5 +101,25 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function login(Request $request)
+    {
+        $data_token = [
+            "email" => $request->email,
+        ];
+        
+ $user = User::where($data_token)->first();
+       
+        if($request->password == $user->password){
+
+            $token = new Token($data_token);
+                $tokenEncoded = $token->encode();
+
+                return response()->json(["token" => $tokenEncoded],201);
+        }
+
+
+ return response()->json (["Error"=>"No se ha encontrado"],401);
+
     }
 }

@@ -25,6 +25,7 @@ class checkAuth
 
             if (isset($user)) 
             {
+                $request->request->add('date_token',$data_token);
                 return $next($request);
             }
 
