@@ -42,15 +42,13 @@ class UserController extends Controller
         $user->register($request);
 
         $data_token = [
-            "email" => $user->email,
+            "email" => $request->email,
         ];
 
         $token = new Token($data_token);
         $tokenEncode = $token->encode();
     
-        return response()->json([
-            "token" => $tokenEncode
-        ], 201);
+        return response()->json(["token" => $tokenEncode], 201);
     }
 
     /**

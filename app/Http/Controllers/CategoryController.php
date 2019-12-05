@@ -38,9 +38,21 @@ class CategoryController extends Controller
 
     {
         $category = new Category();
+
         $email = $request->data_token->email;
         $user = User::where('email', $email)->first();
+   
         $name = $request->name;
+        $id_user = $user->id;
+        
+        $category_repeated = Category::where('id_user', $id_user)->where('name',$name)->first();
+
+         if (isset($category_repeated)) 
+            {
+                return response()->json([
+                    "message" => "Categoria ya esta creada"
+                ], 200);
+            }
 
         $category->createCategory($name, $user);
 

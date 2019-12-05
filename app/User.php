@@ -25,7 +25,7 @@ class User extends Model
 
     public function categories()
     {
-        return $this->hasMany('App\user', 'user_id');
+        return $this->hasMany('App\user', 'id_user');
     }
 
 }
