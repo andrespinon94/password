@@ -39,21 +39,33 @@ class PasswordController extends Controller
     {
         
         $password = new Password();
+
         $email = $request->data_token->email;
         $user = User::where('email', $email)->first();
         $id_user = $user->id;
+
         $password_content = $request->password;
         $title = $request->title;
+
         $category_name = $request->category_name;
         $category = Category::where('id_user', $id_user)->where('name',$category_name)->first();
-        
-        if (!isset($category)) 
+
+         if (!isset($category)) 
         {
             return response()->json([
                 "message" => "Categoria no esta creada"
             ], 200);
         }
 
+        $password_repeated = Password::where('id_category', $category->id)->where('title',$title)->first();
+
+        if (isset($password_repeated)) 
+           {
+               return response()->json([
+                   "message" => " esta contrasena ya esta creada"
+               ], 200);
+           }
+       
         $password->givePassword($password_content,$category_name,$category);
 
         return response()->json([

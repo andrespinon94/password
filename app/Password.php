@@ -16,7 +16,20 @@ class Password extends Model
         $password->title = $title;
         $password->password = $password_content;
         $password->id_category = $category->id;
-
+        //$password->checkPassword($password);
         $password->save();
     }
+
+   /* public function checkPassword($password)
+    {
+        $password_repeated = Password::where('id_category', $password->id_category)->where('title',$password->title)->first();
+
+         if (isset($password_repeated)) 
+            {
+                return response()->json([
+                    "message" => "contrasena ya esta creada"
+                ], 200);
+            }
+    }
+    */
 }
