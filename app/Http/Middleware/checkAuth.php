@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use App\Helpers\Token;
+use App\User;
 class checkAuth
 {
     /**
@@ -25,7 +26,7 @@ class checkAuth
 
             if (isset($user)) 
             {
-                $request->request->add('date_token',$data_token);
+                $request->request->add(['data_token' => $data_token]);
                 return $next($request);
             }
 

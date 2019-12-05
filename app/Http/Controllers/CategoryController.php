@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Category;
+use App\User;
+
 class CategoryController extends Controller
 {
     /**
@@ -33,13 +35,21 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
+
     {
         $category = new Category();
-        $category->name = $request->name;
-        $category->email = $request->email;
-        $category->password = $request->password;
-        $category->save();
+        $email = $request->data_token->email;
+        $user = User::where('email', $email)->first();
+        $name = $request->name;
+
+        $category->createCategory($name, $user);
+
+        return response()->json([
+            "message" => "Categoria Creada"
+        ], 200);
+
     }
+    
 
     /**
      * Display the specified resource.

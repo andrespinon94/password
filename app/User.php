@@ -22,4 +22,10 @@ class User extends Model
         $user->password = $request->password;
         $user->save();
     }
+
+    public function categories()
+    {
+        return $this->hasMany('App\user', 'user_id');
+    }
+
 }
