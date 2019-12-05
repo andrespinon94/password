@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Password;
+use App\Category;
+use App\User;
+
 class PasswordController extends Controller
 {
     /**
@@ -34,7 +37,30 @@ class PasswordController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $password = new Password();
+        $email = $request->data_token->email;
+        $user = User::where('email', $email)->first();
+        $id_user = $user->id;
+        $password_content = $request->password;
+        $title = $request->title;
+        $category_name = $request->category_name;
+        $category = Category::where('id_user', $id_user)->where('name',$category_name)->first();
+        
+        if (!isset($category)) 
+        {
+            return response()->json([
+                "message" => "Categoria no esta creada"
+            ], 200);
+        }
+
+        $password->givePassword($password_content,$category_name,$category);
+
+        return response()->json([
+            "message" => "Contrasena Creada"
+        ], 200);
+    
+        
     }
 
     /**
