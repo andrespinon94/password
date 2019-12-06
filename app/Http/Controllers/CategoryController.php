@@ -92,9 +92,15 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $user = User::where('email',$request->data_token->email)->first();
+        $category = Category::where('id_user',$user->id)->where('name',$request->category_name)->first();
+
+        $category->name = $request->category_new_name;
+        $category->update();
+
+        return response()->json(["Success" => "catgory edited"], 201);
     }
 
     /**
@@ -103,8 +109,9 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+         //destry da problemas al usar _method delete. averiguar  porqua
+         
     }
 }
