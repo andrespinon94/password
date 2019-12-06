@@ -46,8 +46,8 @@ class PasswordController extends Controller
 
         $password_content = $request->password;
         $title = $request->title;
-
         $category_name = $request->category_name;
+
         $category = Category::where('id_user', $id_user)->where('name',$category_name)->first();
 
          if (!isset($category)) 
@@ -66,7 +66,7 @@ class PasswordController extends Controller
                ], 200);
            }
        
-        $password->givePassword($password_content,$category_name,$category);
+        $password->givePassword($password_content,$title,$category);
 
         return response()->json([
             "message" => "Contrasena Creada"
