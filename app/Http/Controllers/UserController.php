@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Category;
+use App\Password;
 use App\Helpers\Token;
 
 
@@ -58,10 +60,26 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Request $request)
-    {
-        
-        $user = User::where('email',$data_token->email)->first();
-        return response()->json([ "user" => $user], 201);
+    {       
+        $data_array = array();
+        $user = User::where('email', $request->data_token->email)->first();
+        $categories = Category::where('id_user', $user->id)->get();
+
+        if (isset($categories)) 
+        {
+            array_push($data_array,$categories);
+            
+            foreach ($categories as $key => $category) {
+
+                $passwords = Password::where('id_category',$category->id)->get();
+                array_push($data_array, $passwords);
+            }
+                 
+            return response()->json([ "data" => $data_array]);
+
+        } else {
+            return response()->json(["Error" => "No existen categorias y contrseñas "]);
+        }
         
     }
 
