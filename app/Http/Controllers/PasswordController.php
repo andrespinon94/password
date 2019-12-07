@@ -89,7 +89,6 @@ class PasswordController extends Controller
                 $passwords = Password::where('id_category',$category->id)->get();
                 array_push($array_passwords, $passwords);
             }
-            
         
             return response()->json([ "passwords" => $array_passwords]);
 
@@ -136,8 +135,19 @@ class PasswordController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        
+        $password = Password::where('title', $request->title)->first();
+        if (isset($password)) 
+        {
+            $password->delete();
+            return response()->json([
+                "success" => 'contraseña eliminada'
+            ], 201);
+        }else{
+            return response()->json([
+                "error" => 'la contraseña a eliminar no existe'
+            ], 401);
+        }
     }
 }
