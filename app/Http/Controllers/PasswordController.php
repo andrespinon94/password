@@ -137,7 +137,10 @@ class PasswordController extends Controller
      */
     public function destroy(Request $request)
     {
-        $password = Password::where('title', $request->title)->first();
+        $user= User::where('email',$request->data_token->email)->first();       
+        $category = Category::where('name', $request->category_name)->where('id_user',$user->id)->first();
+        $password = Password::where('title', $request->title)->where('id_category',$category->id)->first();
+
         if (isset($password)) 
         {
             $password->delete();
