@@ -57,13 +57,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Data_token $data_token)
+    public function show(Request $request)
     {
         
         $user = User::where('email',$data_token->email)->first();
-        return response()->json([
-            "user" => $user
-        ], 201);
+        return response()->json([ "user" => $user], 201);
         
     }
 

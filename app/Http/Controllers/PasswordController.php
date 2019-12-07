@@ -37,7 +37,6 @@ class PasswordController extends Controller
      */
     public function store(Request $request)
     {
-        
         $password = new Password();
 
         $email = $request->data_token->email;
@@ -48,31 +47,27 @@ class PasswordController extends Controller
         $title = $request->title;
         $category_name = $request->category_name;
 
-        $category = Category::where('id_user', $id_user)->where('name',$category_name)->first();
+        $category = Category::where('id_user', $id_user)->where('name', $category_name)->first();
 
-         if (!isset($category)) 
-        {
+        if (!isset($category)) {
             return response()->json([
                 "message" => "Categoria no esta creada"
             ], 200);
         }
 
-        $password_repeated = Password::where('id_category', $category->id)->where('title',$title)->first();
+        $password_repeated = Password::where('id_category', $category->id)->where('title', $title)->first();
 
-        if (isset($password_repeated)) 
-           {
-               return response()->json([
+        if (isset($password_repeated)) {
+            return response()->json([
                    "message" => " esta contrasena ya esta creada"
                ], 200);
-           }
+        }
        
-        $password->givePassword($password_content,$title,$category);
+        $password->givePassword($password_content, $title, $category);
 
         return response()->json([
             "message" => "Contrasena Creada"
         ], 200);
-    
-        
     }
 
     /**
@@ -81,10 +76,28 @@ class PasswordController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        $array_passwords = array();
+        $user = User::where('email', $request->data_token->email)->first();
+        $categories = Category::where('id_user', $user->id)->get();
+
+        if (isset($categories)) 
+        {
+            foreach ($categories as $key => $category) {
+
+                $passwords = Password::where('id_category',$category->id)->get();
+                array_push($array_passwords, $passwords);
+            }
+            
+        
+            return response()->json([ "passwords" => $array_passwords]);
+
+        } else {
+            return response()->json(["Error" => "No existen categorias  con contraseñas que mostrar"]);
+        }
     }
+
 
     /**
      * Show the form for editing the specified resource.
