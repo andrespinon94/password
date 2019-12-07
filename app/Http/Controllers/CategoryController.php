@@ -69,9 +69,16 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        $user = User::where('email',$request->data_token->email)->first();
+        $categories = Category::where('id_user',$user->id)->get();
+
+       if (isset($categories)) {    
+            return response()->json([ "Categories" => $categories]);
+        }else{
+            return response()->json(["Error" => "No existen categorias que mostrar"]);
+        }
     }
 
     /**
