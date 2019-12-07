@@ -118,8 +118,19 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request)
-    {
-         //destry da problemas al usar _method delete. averiguar  porqua
+    {    
+        $category = Category::where('name', $request->name)->first();
+        if (isset($category)) 
+        {
+            $category->delete();
+            return response()->json([
+                "success" => 'categoria eliminada'
+            ], 201);
+        }else{
+            return response()->json([
+                "error" => 'la categoria a eliminar no existe'
+            ], 401);
+        }         
          
     }
 }
