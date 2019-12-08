@@ -41,6 +41,12 @@ class UserController extends Controller
     {
         $user = new User();
         
+        $user_reapeted = User::where('email', $request->email)->first();
+
+        if (isset($user_reapeted)) {
+
+            return response()->json(["repetido" => "usuario  con ese email ya existe"]);
+        }
         $user->register($request);
 
         $data_token = [
@@ -68,7 +74,7 @@ class UserController extends Controller
         if (isset($categories)) 
         {
             array_push($data_array,$categories);
-            
+
             foreach ($categories as $key => $category) {
 
                 $passwords = Password::where('id_category',$category->id)->get();
@@ -78,7 +84,7 @@ class UserController extends Controller
             return response()->json([ "data" => $data_array]);
 
         } else {
-            return response()->json(["Error" => "No existen categorias y contrseñas "]);
+            return response()->json(["Error" => "no categories and  passwords to show "]);
         }
         
     }
@@ -103,7 +109,15 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $user = User::where('email',$request->new_email)->first();
+
+        if (isset($user)) 
+        {
+            return response()->json(["error" => "email already exist in database"], 201);
+        }
+
         $user = User::where('email',$request->data_token->email)->first();
+
         $user->email = $request->new_email;
         $user->name = $request->new_name;
         $user->password = $request->new_password;
@@ -128,7 +142,7 @@ class UserController extends Controller
             "email" => $request->email,
         ];
         
- $user = User::where($data_token)->first();
+        $user = User::where($data_token)->first();
        
         if($request->password == $user->password){
 
@@ -139,7 +153,7 @@ class UserController extends Controller
         }
 
 
- return response()->json (["Error"=>"No se ha encontrado"],401);
+ return response()->json (["Error"=>"user is not registered"],401);
 
     }
 }
