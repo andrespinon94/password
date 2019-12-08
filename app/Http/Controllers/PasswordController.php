@@ -35,6 +35,7 @@ class PasswordController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(Request $request)
     {
         $password = new Password();
@@ -49,25 +50,21 @@ class PasswordController extends Controller
 
         $category = Category::where('id_user', $id_user)->where('name', $category_name)->first();
 
-        if (!isset($category)) {
-            return response()->json([
-                "message" => "Categoria no esta creada"
-            ], 200);
+        if (!isset($category)) 
+        {
+            return response()->json(["message" => "Categoria no esta creada"], 200);
         }
 
         $password_repeated = Password::where('id_category', $category->id)->where('title', $title)->first();
 
-        if (isset($password_repeated)) {
-            return response()->json([
-                   "message" => " esta contrasena ya esta creada"
-               ], 200);
+        if (isset($password_repeated)) 
+        {
+            return response()->json(["message" => " esta contrasena ya esta creada"], 200);
         }
        
         $password->givePassword($password_content, $title, $category);
 
-        return response()->json([
-            "message" => "Contrasena Creada"
-        ], 200);
+        return response()->json(["message" => "Contrasena Creada"], 200);
     }
 
     /**
@@ -76,6 +73,7 @@ class PasswordController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function show(Request $request)
     {
         $array_passwords = array();
@@ -88,6 +86,10 @@ class PasswordController extends Controller
 
                 $passwords = Password::where('id_category',$category->id)->get();
                 array_push($array_passwords, $passwords);
+            }
+//probar esta linea
+            if (!isset($array_passwords)) {
+                return response()->json([ "passwords" => " No passwords to show on this categories"]);
             }
         
             return response()->json([ "passwords" => $array_passwords]);
@@ -119,8 +121,20 @@ class PasswordController extends Controller
     public function update(Request $request)
     {
         $user = User::where('email',$request->data_token->email)->first();
+
         $category = Category::where('id_user',$user->id)->where('name',$request->category_name)->first();
+
+        if (isset($category)) 
+        {
+        return response()->json([ "message" => "la categoria no existe"], 200);
+        }
+
         $password = Password::where('id_category',$category->id)->where('title',$request->title)->first();
+        
+        if (isset($password)) 
+        {
+        return response()->json([ "message" => "password does not exist"], 200);
+        }
 
         $password->title = $request->new_title;
         $password->password =$request->new_password;
@@ -137,7 +151,7 @@ class PasswordController extends Controller
      */
     public function destroy(Request $request)
     {
-        $user= User::where('email',$request->data_token->email)->first();       
+        $user= User::where('email',$request->data_token->email)->first();
         $category = Category::where('name', $request->category_name)->where('id_user',$user->id)->first();
         $password = Password::where('title', $request->title)->where('id_category',$category->id)->first();
 
