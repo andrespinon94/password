@@ -50,16 +50,12 @@ class CategoryController extends Controller
 
          if (isset($category_repeated)) 
             {
-                return response()->json([
-                    "message" => "Categoria ya esta creada"
-                ], 200);
+                return response()->json([ "message" => "Categoria ya esta creada"], 200);
             }
 
         $category->createCategory($name, $user);
 
-        return response()->json([
-            "message" => "Categoria Creada"
-        ], 200);
+        return response()->json(["message" => "Categoria Creada"], 200);
 
     }
     
@@ -103,11 +99,18 @@ class CategoryController extends Controller
     public function update(Request $request)
     {
         $user = User::where('email',$request->data_token->email)->first();
+
         $category = Category::where('id_user',$user->id)->where('name',$request->category_name)->first();
+
+         if (!isset($category))         
+        {
+        return response()->json(["error" => 'category does not exist'], 401);
+        }
 
         $category->name = $request->category_new_name;
         $category->update();
 
+       
         return response()->json(["Success" => "catgory edited"], 201);
     }
 
@@ -120,16 +123,13 @@ class CategoryController extends Controller
     public function destroy(Request $request)
     {    
         $category = Category::where('name', $request->name)->first();
+
         if (isset($category)) 
         {
             $category->delete();
-            return response()->json([
-                "success" => 'categoria eliminada'
-            ], 201);
+            return response()->json(["success" => 'categoria eliminada'], 201);
         }else{
-            return response()->json([
-                "error" => 'la categoria a eliminar no existe'
-            ], 401);
+            return response()->json(["error" => 'la categoria a eliminar no existe'], 401);
         }         
          
     }
