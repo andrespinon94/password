@@ -110,8 +110,7 @@ class CategoryController extends Controller
         $category->name = $request->category_new_name;
         $category->update();
 
-       
-        return response()->json(["Success" => "catgory edited"], 201);
+        return response()->json(["Success" => "catgory edited"],201);
     }
 
     /**
@@ -128,6 +127,7 @@ class CategoryController extends Controller
         {
             $category->delete();
             return response()->json(["success" => 'categoria eliminada'], 201);
+            
         }else{
             return response()->json(["error" => 'la categoria a eliminar no existe'], 401);
         }         

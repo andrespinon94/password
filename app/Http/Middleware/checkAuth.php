@@ -29,9 +29,8 @@ class checkAuth
                 $request->request->add(['data_token' => $data_token]);
                 return $next($request);
             }
-
-    } 
-    var_dump('no tienes permisos'); exit;
+        } 
+        var_dump('no tienes permisos'); exit;
     }
     }
 

@@ -43,15 +43,13 @@ class UserController extends Controller
         
         $user_reapeted = User::where('email', $request->email)->first();
 
-        if (isset($user_reapeted)) {
-
-            return response()->json(["repetido" => "usuario  con ese email ya existe"]);
+        if (isset($user_reapeted)) 
+        {
+            return response()->json(["repetido" => "usuario  con ese email ya existe"],400);
         }
         $user->register($request);
 
-        $data_token = [
-            "email" => $request->email,
-        ];
+        $data_token = ["email" => $request->email];
 
         $token = new Token($data_token);
         $tokenEncode = $token->encode();
@@ -73,15 +71,15 @@ class UserController extends Controller
 
         if (isset($categories)) 
         {
-            array_push($data_array,$categories);
+            array_push($data_array,$user,$categories);
 
-            foreach ($categories as $key => $category) {
-
+            foreach ($categories as $key => $category) 
+            {
                 $passwords = Password::where('id_category',$category->id)->get();
                 array_push($data_array, $passwords);
             }
                  
-            return response()->json([ "data" => $data_array]);
+            return response()->json(["data" => $data_array],200);
 
         } else {
             return response()->json(["Error" => "no categories and  passwords to show "]);
@@ -113,7 +111,7 @@ class UserController extends Controller
 
         if (isset($user)) 
         {
-            return response()->json(["error" => "email already exist in database"], 201);
+            return response()->json(["error" => "email already exist in database"], 400);
         }
 
         $user = User::where('email',$request->data_token->email)->first();
@@ -138,22 +136,16 @@ class UserController extends Controller
     }
     public function login(Request $request)
     {
-        $data_token = [
-            "email" => $request->email,
-        ];
+        $data_token = ["email" => $request->email];
         
         $user = User::where($data_token)->first();
        
-        if($request->password == $user->password){
-
+        if($request->password == $user->password)
+        {
             $token = new Token($data_token);
-                $tokenEncoded = $token->encode();
-
-                return response()->json(["token" => $tokenEncoded],201);
+            $tokenEncoded = $token->encode();
+            return response()->json(["token" => $tokenEncoded],200);
         }
-
-
- return response()->json (["Error"=>"user is not registered"],401);
-
+    return response()->json (["Error"=>"user is not registered"],401);
     }
 }

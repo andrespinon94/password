@@ -77,22 +77,23 @@ class PasswordController extends Controller
     public function show(Request $request)
     {
         $array_passwords = array();
+        $empty_array = array();
         $user = User::where('email', $request->data_token->email)->first();
         $categories = Category::where('id_user', $user->id)->get();
 
         if (isset($categories)) 
         {
-            foreach ($categories as $key => $category) {
-
+            foreach ($categories as $key => $category)
+            {
                 $passwords = Password::where('id_category',$category->id)->get();
                 array_push($array_passwords, $passwords);
             }
-//probar esta linea
-            if (!isset($array_passwords)) {
-                return response()->json([ "passwords" => " No passwords to show on this categories"]);
+            if ($array_passwords == $empty_array)
+            {
+                return response()->json([ "passwords" => " No passwords to show"]);
             }
-        
-            return response()->json([ "passwords" => $array_passwords]);
+
+            return response()->json([ "passwords" => $array_passwords],200);
 
         } else {
             return response()->json(["Error" => "No existen categorias  con contraseñas que mostrar"]);
@@ -124,20 +125,20 @@ class PasswordController extends Controller
 
         $category = Category::where('id_user',$user->id)->where('name',$request->category_name)->first();
 
-        if (isset($category)) 
+        if (!isset($category)) 
         {
         return response()->json([ "message" => "la categoria no existe"], 200);
         }
 
         $password = Password::where('id_category',$category->id)->where('title',$request->title)->first();
         
-        if (isset($password)) 
+        if (!isset($password)) 
         {
         return response()->json([ "message" => "password does not exist"], 200);
         }
 
         $password->title = $request->new_title;
-        $password->password =$request->new_password;
+        $password->password = $request->new_password;
         $password->update();
 
         return response()->json(["Success" => "password edited"], 201);
@@ -158,13 +159,9 @@ class PasswordController extends Controller
         if (isset($password)) 
         {
             $password->delete();
-            return response()->json([
-                "success" => 'contraseña eliminada'
-            ], 201);
+            return response()->json(["success" => 'contraseña eliminada'], 200);
         }else{
-            return response()->json([
-                "error" => 'la contraseña a eliminar no existe'
-            ], 401);
+            return response()->json(["error" => 'la contraseña a eliminar no existe' ], 401);
         }
     }
 }
